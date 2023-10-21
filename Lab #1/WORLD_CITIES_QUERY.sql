@@ -1,1 +1,2 @@
-SELECT * FROM world.city
+select * from city;
+select * from city where name like 'a%';

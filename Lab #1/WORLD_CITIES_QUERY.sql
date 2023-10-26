@@ -1,3 +1,3 @@
-use world;
-select * from city;
-select * from city where name like 'a%';
+USE world;
+SELECT * FROM city;
+SELECT * FROM city WHERE NAME LIKE 'a%';

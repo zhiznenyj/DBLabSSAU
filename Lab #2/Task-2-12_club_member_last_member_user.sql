@@ -1,2 +1,2 @@
--- ВЫБРАТЬ дату последней регистрации (самую позднюю)
-SELECT joindate from cd.members ORDER BY joindate DESC LIMIT 1;
+-- ВЫБРАТЬ дату последней регистрации члена клуба
+SELECT MAX(joindate) AS 'Последняя регистарция' FROM cd.members;

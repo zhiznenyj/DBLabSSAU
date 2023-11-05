@@ -1,2 +1,4 @@
--- ВЫБРАТЬ 10 УНИКАЛЬНЫХ ФАМИЛИЙ ЧЛЕНОВ КЛУБА С ТАБЛИЦЫ members БД cd
-SELECT DISTINCT surname FROM cd.members WHERE surname != 'Guest' ORDER BY surname LIMIT 10;
+-- ВЫБРАТЬ 10 фамилий членов клуба и ОТСОРТИРОВАТЬ их по алфавиту без повторов
+SELECT surname FROM (
+SELECT distinct surname FROM cd.members where surname!='GUEST' LIMIT 10
+) as memsurname order by surname;

@@ -1,8 +1,9 @@
 -- ВЫБРАТЬ членов клуба рекомендованных  включая человека, который их рекомендовал (если таковой имеется)
 -- В алфавитном порядке БЕЗ использования JOIN.
-SELECT DISTINCT
-      CONCAT(mem1.surname, " ", mem1.firstname) as 'Участник',
-      IF(mem1.recommendedby IS NULL, "NULL", CONCAT(mem2.surname, " ", mem2.firstname)) as 'Рекомендован'
-  FROM cd.members as mem1, cd.members mem2
-  WHERE (mem1.recommendedby = mem2.memid OR mem1.recommendedby IS NULL)
-  ORDER BY Участник;
+
+  SELECT CONCAT(m1.surname, ' ', m1.firstname) AS 'Участник', 
+    (SELECT CONCAT(m2.surname, ' ', m2.firstname) FROM cd.members m2 
+    WHERE m2.memid = m1.recommendedby) AS 'Рекомендован' FROM cd.members m1
+WHERE m1.memid != 0
+ORDER BY Участник;
+

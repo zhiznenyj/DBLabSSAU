@@ -1,25 +1,26 @@
--- Произвести изменения в стоимости аренды объектов согласно расчету задания Task-7-4,
--- написав update-скрипт. Напишите скрипт отмечающий оплату всех аренд за август 2012 года.
--- Рассчитать окупаемость объектов исходя из оплат за август, используя функцию 
--- Task-7-3 . Сравнить, совпадают ли расчетные данные с теми,
--- что были Вами получены в задании Task-7-4.
+-- Проведение изменений в стоимости аренды, а также отмечающий оплату всех аренд за август 2012.
 
 USE cd;
 
 START TRANSACTION;
-  SET @k = 2;
-  SET @cur_time = '2012-07-31-23:59:59';
-  UPDATE facilities
-    SET guestcost = CAST(SUBSTRING_INDEX(
-        (SELECT increase_income_by(facid, @k, @cur_time)), ';', 1
-    ) AS DECIMAL(10, 0)),
-    membercost = CAST(SUBSTRING_INDEX(
-        (SELECT increase_income_by(facid, @k, @cur_time)), ';', -1
-    ) AS DECIMAL(10, 0));
-  
-  UPDATE bookings
+    -- Проверка 
+    CALL getPayback(4, MONTH('2012-07-03'), YEAR('2012-07-03'));
+
+    -- Изменение стоимости аренды каждого объекта
+    UPDATE facilities
+    SET
+        guestcost = guestcost * (SELECT getDiffPayback(facid, 2, '2012-07-31-23:59:59')),
+        membercost = membercost * (SELECT getDiffPayback(facid, 2, '2012-07-31-23:59:59'));
+
+    -- Оплачиваем аренды за август.
+    UPDATE bookings
     SET payed = 1
     WHERE DATE(starttime) < '2012-09-01' AND DATE(starttime) >= '2012-08-01';
 
-  
+    -- Проверка
+    CALL getPayback(4, MONTH('2012-08-03'), YEAR('2012-08-03'));
 ROLLBACK;
+
+-- В основном коэффициент оккупаемости ( за сколько предполагаемых месяцев объект окупится ) увеличился.
+-- Но есть объекты, чьи коэффициенты наоборот уменьшились за счет того, что были оплачены аренды за август.
+-- Есть объект, который окупился лишь в августе ( в июле он ушел в минус ).
